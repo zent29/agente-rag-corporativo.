@@ -1,15 +1,13 @@
-# Framework RAG
-langchain
-langchain-community
-langchain-openai
+# Asistente Pinecone (RAG gestionado en la nube)
+pinecone
+pinecone-plugin-assistant
+pinecone-plugin-interface
+requests
 
 # Interfaz
 streamlit
 
-# Base de datos vectorial (local, para desarrollo)
-chromadb
-
-# Procesamiento de documentos
+# Procesamiento de documentos (por si se necesita en el futuro)
 pypdf
 python-docx
 openpyxl
@@ -19,4 +17,3 @@ beautifulsoup4
 
 # Utilidades
 python-dotenv
-tiktoken
