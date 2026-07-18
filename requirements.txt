@@ -1,0 +1,22 @@
+# Framework RAG
+langchain
+langchain-community
+langchain-openai
+
+# Interfaz
+streamlit
+
+# Base de datos vectorial (local, para desarrollo)
+chromadb
+
+# Procesamiento de documentos
+pypdf
+python-docx
+openpyxl
+python-pptx
+markdown
+beautifulsoup4
+
+# Utilidades
+python-dotenv
+tiktoken

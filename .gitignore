@@ -1,0 +1,39 @@
+# Entornos virtuales
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+
+# Variables de entorno y secretos
+.env
+.env.local
+*.key
+credentials.json
+
+# Datos y documentos (no versionar contenido sensible/pesado)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Base de datos vectorial local (ej. Chroma)
+chroma_db/
+*.sqlite3
+
+# Logs
+logs/*.jsonl
+logs/*.log
+!logs/.gitkeep
+
+# IDE / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Jupyter
+.ipynb_checkpoints/
