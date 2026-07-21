@@ -76,8 +76,8 @@ agente-rag-corporativo/
 - [x] Subida de documentos desde la interfaz (PDF, TXT, DOCX)
 - [x] Interfaz de chat con Streamlit
 - [x] Health check del asistente en la barra lateral
-- [ ] Pruebas automatizadas
-- [ ] Logging y trazabilidad de consultas
+- [x] Pruebas automatizadas
+- [x] Logging y trazabilidad de consultas
 - [ ] Despliegue en producción (OCI / Streamlit Cloud)
 
 ## ⚙️ Instalación
