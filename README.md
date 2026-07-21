@@ -12,71 +12,138 @@ Centralizar el acceso al conocimiento interno de la empresa a través de un agen
 
 ## 🧱 Stack tecnológico
 
-- **Lenguaje / Framework RAG:** Python + LangChain
-- **Interfaz:** Streamlit
-- **Base de datos vectorial:** Chroma (desarrollo local) — evaluando migración a Oracle Autonomous Database para producción
-- **Despliegue:** Oracle Cloud Infrastructure (OCI)
+| Capa | Tecnología |
+|---|---|
+| **Lenguaje** | Python 3 |
+| **Base de datos vectorial / RAG** | [Pinecone Assistant](https://docs.pinecone.io/guides/assistant/understanding-assistant) (gestionado en la nube) |
+| **Interfaz** | Streamlit |
+| **Procesamiento de documentos** | pypdf, python-docx, openpyxl, python-pptx |
+| **Variables de entorno** | python-dotenv |
+
+> El proyecto utiliza **Pinecone Assistant** como motor RAG gestionado, lo que delega el chunking, la indexación vectorial y el retrieval semántico directamente al servicio de Pinecone, simplificando la arquitectura.
 
 ## 🗺️ Arquitectura del pipeline
 
-El proyecto está organizado en las siguientes etapas:
-
-1. **Colecta y organización de documentos** — mapeo de fuentes, categorización, curaduría y definición de responsables.
-2. **Procesamiento y extracción de contenido** — extracción por formato (PDF, Word, Excel, PowerPoint, etc.), limpieza y chunking.
-3. **Indexación vectorial** — generación de embeddings y almacenamiento en base de datos vectorial.
-4. **Capa de recuperación (retrieval)** — búsqueda semántica, filtrado por metadatos y reranking.
-5. **Generación de respuesta** — generación de la respuesta final con citación de fuentes y control de alucinación.
-6. **Interfaz** — chat web construido con Streamlit.
-7. **Despliegue** — publicación en Oracle Cloud Infrastructure (OCI).
-8. **Registro de ejecución** — logging y trazabilidad de las consultas realizadas.
+```
+Usuario
+   │
+   ▼
+Interfaz Streamlit (src/interface/app.py)
+   │
+   ▼
+PineconeAssistant (src/generation/pinecone_assistant.py)
+   │  · chat() con soporte multi-turno
+   │  · ask_stream() con respuesta en streaming
+   │  · upload_file() para indexar documentos
+   │  · health_check() para verificar estado
+   │
+   ▼
+Pinecone Assistant API (RAG gestionado en la nube)
+   │  · Chunking automático
+   │  · Embeddings + búsqueda vectorial
+   │  · Generación de respuesta con citación de fuentes
+```
 
 ## 📂 Estructura del repositorio
 
 ```
 agente-rag-corporativo/
 ├── src/
-│   ├── ingestion/       # Colecta y organización de documentos
-│   ├── processing/      # Extracción y limpieza de contenido, chunking
-│   ├── indexing/        # Generación de embeddings e indexación vectorial
-│   ├── retrieval/       # Búsqueda semántica, filtros y reranking
-│   ├── generation/      # Generación de respuestas con el LLM
-│   ├── interface/       # Interfaz Streamlit
-│   └── logging/         # Registro de ejecución (logs)
+│   ├── generation/      # Cliente PineconeAssistant (ask, stream, upload)
+│   ├── interface/       # Aplicación Streamlit (app.py)
+│   ├── ingestion/       # (Reservado) colecta y organización de documentos
+│   ├── processing/      # (Reservado) extracción y limpieza de contenido
+│   ├── indexing/        # (Reservado) pipeline de indexación alternativo
+│   ├── retrieval/       # (Reservado) capa de retrieval personalizado
+│   └── logging/         # (Reservado) registro de ejecución
 ├── data/
-│   ├── raw/              # Documentos originales
-│   └── processed/        # Documentos procesados/chunked
-├── docs/                 # Documentación adicional, capturas, diagramas
-├── logs/                 # Logs de ejecución
-├── tests/                # Pruebas
+│   ├── raw/             # Documentos originales
+│   └── processed/       # Documentos procesados
+├── docs/                # Documentación adicional, capturas, diagramas
+├── logs/                # Logs de ejecución
+├── tests/               # Pruebas
+├── run.py               # Script de arranque de la aplicación
 ├── requirements.txt
+├── .env.example         # Plantilla de variables de entorno
 └── README.md
 ```
 
 ## 🚀 Estado del proyecto
 
-🔧 En desarrollo. Este README se irá actualizando a medida que avancen las etapas del proyecto.
-
 - [x] Configuración inicial del repositorio
-- [ ] Colecta y organización de documentos
-- [ ] Procesamiento y extracción de contenido
-- [ ] Indexación vectorial
-- [ ] Capa de recuperación
-- [ ] Generación de respuesta con citación de fuentes
-- [ ] Interfaz (Streamlit)
-- [ ] Despliegue en Oracle Cloud Infrastructure (OCI)
-- [ ] Registro de ejecución en la nube
+- [x] Integración con Pinecone Assistant (SDK oficial)
+- [x] Módulo de generación con soporte multi-turno y streaming
+- [x] Subida de documentos desde la interfaz (PDF, TXT, DOCX)
+- [x] Interfaz de chat con Streamlit
+- [x] Health check del asistente en la barra lateral
+- [ ] Pruebas automatizadas
+- [ ] Logging y trazabilidad de consultas
+- [ ] Despliegue en producción (OCI / Streamlit Cloud)
 
-## ⚙️ Instalación (en construcción)
+## ⚙️ Instalación
+
+### 1. Clonar el repositorio
 
 ```bash
 git clone <url-del-repositorio>
 cd agente-rag-corporativo
-python -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
+```
+
+### 2. Crear y activar el entorno virtual
+
+```bash
+# Windows
+python -m venv .venv
+.venv\Scripts\activate
+
+# macOS / Linux
+python -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Instalar dependencias
+
+```bash
 pip install -r requirements.txt
 ```
 
+### 4. Configurar variables de entorno
+
+Copia `.env.example` a `.env` y completa los valores:
+
+```bash
+cp .env.example .env
+```
+
+Edita el archivo `.env`:
+
+```env
+PINECONE_API_KEY=tu_clave_api_de_pinecone
+PINECONE_ASSISTANT_NAME=nombre_de_tu_asistente
+PINECONE_HOST=host_de_tu_asistente  # opcional
+```
+
+> Puedes obtener tu API key y el nombre del asistente desde la [consola de Pinecone](https://app.pinecone.io/).
+
+### 5. Ejecutar la aplicación
+
+```bash
+python run.py
+```
+
+O directamente con Streamlit:
+
+```bash
+streamlit run src/interface/app.py
+```
+
+## 🖥️ Uso
+
+1. Abre la aplicación en tu navegador (por defecto `http://localhost:8501`).
+2. Verifica que la API Key esté configurada correctamente en la barra lateral.
+3. (Opcional) Sube documentos internos desde la barra lateral para indexarlos en Pinecone.
+4. Haz preguntas en el chat sobre los documentos indexados.
+
 ## 📄 Licencia
 
-Proyecto desarrollado como parte de un desafío de formación (Alura Latam / Oracle Next Education).
-# agente-rag-corporativo.
+Proyecto desarrollado como parte de un desafío de formación — Alura Latam / Oracle Next Education (ONE).
