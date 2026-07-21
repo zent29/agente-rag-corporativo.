@@ -47,20 +47,11 @@ def main():
 
         if not api_key:
             st.error("❌ PINECONE_API_KEY no configurada en el archivo .env")
-        else:
-            st.success("✅ Pinecone API Key detectada")
-
-        st.markdown("---")
-        st.subheader("🤖 Asistente Activo")
-        st.info(
-            f"**Nombre:** `{assistant_name}`\n\n"
-            f"**Host:** `{host}`"
-        )
 
         # ── Subida de documentos a Pinecone ───────────────────────────────────
         st.markdown("---")
         st.subheader("📁 Subir Documentos")
-        st.caption("Los archivos se indexan directamente en el asistente Pinecone.")
+        st.caption("Los archivos se indexan directamente en el asistente.")
 
         uploaded_files = st.file_uploader(
             "Selecciona archivos",
@@ -69,7 +60,7 @@ def main():
             help="Los documentos se subirán al asistente Pinecone para indexación."
         )
 
-        if st.button("⬆️ Subir a Pinecone", disabled=not uploaded_files):
+        if st.button("⬆️ Subir", disabled=not uploaded_files):
             if api_key and uploaded_files:
                 assistant = get_assistant()
                 success_count = 0
@@ -104,7 +95,7 @@ def main():
             try:
                 assistant = get_assistant()
                 if assistant.health_check():
-                    st.success("✅ Asistente Pinecone en línea")
+                    st.success("✅ Asistente en línea")
                 else:
                     st.warning("⚠️ No se pudo verificar el asistente")
             except ValueError as e:
